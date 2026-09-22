@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Telecom Customer Churn Prediction</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #6b7280;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 20px;
+            margin: 25px 0 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            padding: 11px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 13px 35px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .churn {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+        }
+
+        .stay {
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+        }
+
+        .result h2 {
+            margin-bottom: 10px;
+        }
+
+        .probability {
+            font-size: 18px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                margin: 10px auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Telecom Customer Churn Prediction</h1>
+        <p>Enter customer details to predict the probability of churn.</p>
+    </div>
+
+    <div class="card">
+
+        <form action="/predict" method="POST">
+
+            <div class="section-title">Customer Information</div>
+
+            <div class="grid">
+
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select name="gender">
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Senior Citizen</label>
+                    <select name="SeniorCitizen">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Partner</label>
+                    <select name="Partner">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Dependents</label>
+                    <select name="Dependents">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tenure (Months)</label>
+                    <input type="number" name="tenure" min="0" required>
+                </div>
+
+            </div>
+
+
+            <div class="section-title">Phone Services</div>
+
+            <div class="grid">
+
+                <div class="form-group">
+                    <label>Phone Service</label>
+                    <select name="PhoneService">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Multiple Lines</label>
+                    <select name="MultipleLines">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="No phone service">No phone service</option>
+                    </select>
+                </div>
+
+            </div>
+
+
+            <div class="section-title">Internet Services</div>
+
+            <div class="grid">
+
+                <div class="form-group">
+                    <label>Internet Service</label>
+                    <select name="InternetService">
+                        <option value="DSL">DSL</option>
+                        <option value="Fiber optic">Fiber optic</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Online Security</label>
+                    <select name="OnlineSecurity">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="No internet service">No internet service</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Online Backup</label>
+                    <select name="OnlineBackup">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="No internet service">No internet service</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Device Protection</label>
+                    <select name="DeviceProtection">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="No internet service">No internet service</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tech Support</label>
+                    <select name="TechSupport">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="No internet service">No internet service</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Streaming TV</label>
+                    <select name="StreamingTV">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="No internet service">No internet service</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Streaming Movies</label>
+                    <select name="StreamingMovies">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="No internet service">No internet service</option>
+                    </select>
+                </div>
+
+            </div>
+
+
+            <div class="section-title">Account Information</div>
+
+            <div class="grid">
+
+                <div class="form-group">
+                    <label>Contract</label>
+                    <select name="Contract">
+                        <option value="Month-to-month">Month-to-month</option>
+                        <option value="One year">One year</option>
+                        <option value="Two year">Two year</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Paperless Billing</label>
+                    <select name="PaperlessBilling">
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select name="PaymentMethod">
+                        <option value="Electronic check">Electronic check</option>
+                        <option value="Mailed check">Mailed check</option>
+                        <option value="Bank transfer (automatic)">
+                            Bank transfer (automatic)
+                        </option>
+                        <option value="Credit card (automatic)">
+                            Credit card (automatic)
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Monthly Charges</label>
+                    <input type="number" step="0.01"
+                           name="MonthlyCharges"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Total Charges</label>
+                    <input type="number" step="0.01"
+                           name="TotalCharges"
+                           required>
+                </div>
+
+            </div>
+
+
+            <div class="button-container">
+                <button type="submit">
+                    Predict Churn
+                </button>
+            </div>
+
+        </form>
+
+
+        {% if prediction %}
+
+        <div class="result {{ status }}">
+
+            <h2>{{ prediction }}</h2>
+
+            <div class="probability">
+                Churn Probability:
+                <strong>{{ probability }}%</strong>
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>
